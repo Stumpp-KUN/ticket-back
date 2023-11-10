@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: security-service
+  cloud:
+    config:
+      profile: default
+      label: default
+      uri: http://localhost:8888
+      name: common

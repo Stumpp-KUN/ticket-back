@@ -1,0 +1,27 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+
+spring.cloud.gateway:
+  discovery:
+    locator:
+      enabled: true
+      lower-case-service-id: true
+
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/ticket/**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+            issuer-uri: http://localhost:9090/realms/spring-ticket-realm
