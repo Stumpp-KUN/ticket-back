@@ -2,8 +2,10 @@ package com.example.orderservice.service;
 
 import com.example.orderservice.dto.TicketDTO;
 import com.example.orderservice.entity.*;
+import com.example.orderservice.event.HistorySaveEvent;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.mapper.TicketMapper;
+import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.repository.HistoryRepository;
 import com.example.orderservice.repository.TicketsRepository;
 import com.example.orderservice.repository.UserRepository;
@@ -11,6 +13,7 @@ import com.example.orderservice.util.Sorter;
 import com.example.orderservice.util.TicketUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,139 +35,144 @@ public class TicketService {
     private final UserService userService;
     private final HistoryService historyService;
 
-    private final TicketUtil ticketUtil;
     private final Sorter sorter;
+    private final TicketUtil ticketUtil;
+
+    private final KafkaTemplate kafkaTemplate;
 
     public Ticket getTicket(Long id) throws EntityNotFoundException {
         log.info("Getting ticket with id {}", id);
 
         return ticketsRepository.findById(id)
                 .orElseThrow(
-                        ()->new EntityNotFoundException("There is not ticket with id "+id));
+                        () -> new EntityNotFoundException("There is not ticket with id " + id));
     }
 
-    public List<Ticket> getTickets(Jwt token) throws EntityNotFoundException {
-        log.info("Finding all available tickets");
+    public List<Ticket> getTicketManagerReview(String userEmail) throws EntityNotFoundException {
+        log.info("Getting tickets for manager review");
 
-        return sortTickets(ticketUtil.findTicketByRole(token));
+        User user = userService.getByUserEmail(userEmail);
+
+        List<Ticket> viewEmployeeTickets = ticketsRepository.findAllOwnerEmployeeAndStateNew();
+        List<Ticket> declinedManagerTickets = ticketsRepository.findAllByOwnerIdAndStateId_Declined(user);
+        List<Ticket> allViewTickets = ticketsRepository.findAllByOwnerIdAndStateId_Draft(user);
+
+        allViewTickets.addAll(viewEmployeeTickets);
+        allViewTickets.addAll(declinedManagerTickets);
+        return allViewTickets;
     }
 
-    public List<Ticket> getOwnTickets(Jwt token) throws EntityNotFoundException {
-        log.info("Finding all owns tickets");
+    public List<Ticket> getTicketEmployeeReview(String userEmail) throws EntityNotFoundException {
+        log.info("Getting tickets for employee changing");
 
-        return sortTickets(ticketUtil.findOwnTickets(token));
+        User user = userService.getByUserEmail(userEmail);
+
+        return ticketsRepository.findAllByOwnerIdAndStateId_DraftAndStateId_Declined(user);
     }
 
-    public List<Ticket> sortById(Jwt token) {
-        log.info("Sorting by ticket id");
+    public List<Ticket> getTicketEngineerReview() {
+        log.info("Getting tickets for engineer review");
 
-        return sorter.sortById(token);
+        return ticketsRepository.findAllApprovedAndInProgressTickets();
     }
-
-    public List<Ticket> sortByName(Jwt token) {
-        log.info("Sorting by ticket name");
-
-        return sorter.sortByName(token);
-    }
-
-    public List<Ticket> sortByNameInverse(Jwt token) {
-        log.info("Sorting by ticket name inverse");
-
-        return sorter.sortByNameInverse(token);
-    }
-
-    public List<Ticket> sortByDesiredASC(Jwt token){
-        log.info("Sorting by ticket desired date ASC");
-
-        return sortByDesiredASC(token);
-    }
-
-    public List<Ticket> sortByDesiredDES(Jwt token){
-        log.info("Sorting by ticket desired date DES");
-
-        List<Ticket> allUsersTickets = ticketUtil.findTicketByRole(token);
-        Collections.sort(allUsersTickets, Comparator.comparing(Ticket::getDesiredResolutionDate).reversed());
-        return allUsersTickets;
-    }
-
-    public List<Ticket> sortByUrgencyHigh(Jwt token){
-        log.info("Sorting by ticket urgency high to low");
-
-        List<Ticket> allUsersTickets = ticketUtil.findTicketByRole(token);
-        sorterByUrgencyHigh(allUsersTickets);
-        return allUsersTickets;
-    }
-
-    public List<Ticket> sortByUrgencyLow(Jwt token){
-        log.info("Sorting by ticket urgency low to high");
-
-        List<Ticket> allUsersTickets = ticketUtil.findTicketByRole(token);
-        sorterByUrgencyLow(allUsersTickets);
-        return allUsersTickets;
-    }
-
-    private List<Ticket> sorterByUrgencyHigh(List<Ticket> tickets){
-        Comparator<Ticket> urgencyComparator = Comparator.comparingInt(ticket -> {
-            Urgency urgency = ticket.getUrgencyId();
-            switch (urgency) {
-                case CRITICAL:
-                    return 0;
-                case HIGH:
-                    return 1;
-                case MEDIUM:
-                    return 2;
-                case LOW:
-                    return 3;
-                default:
-                    return 4;
-            }
-        });
-        Collections.sort(tickets, urgencyComparator);
-        return tickets;
-    }
-    private List<Ticket> sorterByUrgencyLow(List<Ticket> tickets){
-        Comparator<Ticket> urgencyComparator = Comparator.comparingInt(ticket -> {
-            Urgency urgency = ticket.getUrgencyId();
-            switch (urgency) {
-                case CRITICAL:
-                    return 4;
-                case HIGH:
-                    return 3;
-                case MEDIUM:
-                    return 2;
-                case LOW:
-                    return 1;
-                default:
-                    return 0;
-            }
-        });
-        Collections.sort(tickets, urgencyComparator);
-        return tickets;
-    }
-
-    private List<Ticket> sortTickets(List<Ticket> tickets) {
-        sorterByUrgencyHigh(tickets);
-
-        Collections.sort(tickets, Comparator.comparing(Ticket::getDesiredResolutionDate).reversed());
-
-        return tickets;
-    }
-
-    // CREATE
 
     @Transactional
-    public Ticket createTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
-        log.info("Creating ticket {}", ticketDTO);
+    public Ticket updateAssigner(Ticket ticket, String userEmail) throws EntityNotFoundException {
+        log.info("Updating assigner, to ticket {}", ticket);
 
-        Ticket ticket = TicketMapper.INSTANCE.toTicket(ticketDTO);
-        User user=userService.getByUserEmail(userEmail);
-        ticket.setCreatedOn(LocalDate.now());
-        ticket.setOwnerId(user);
+        User user = userService.getByUserEmail(userEmail);
+
+        ticket.setAssigneer(user);
 
         historyService.createNewHistory
-                (new History(ticket,LocalDate.now(), Action.TICKET_IS_CREATED,user,"Creating new ticket"));
+                (new History(ticket, Action.TICKET_IS_EDITED, user, "Added assigner "+user.getFirstName()));
 
         return ticketsRepository.save(ticket);
+    }
+
+    public List<Ticket> getTickets(Jwt token, Integer type, Boolean available) throws EntityNotFoundException {
+        switch (type) {
+            case 1: {
+                return sorter.getAllAvailable(token);
+            }
+            case 2: {
+                return sorter.getOwnTickets(token);
+            }
+            case 3: {
+                return sorter.sortById(token, available);
+            }
+            case 4: {
+                return sorter.sortByName(token, available);
+            }
+            case 5: {
+                return sorter.sortByNameInverse(token, available);
+            }
+            case 6: {
+                return sorter.sortByDesiredDES(token, available);
+            }
+            case 7: {
+                return sorter.sortByDesiredASC(token, available);
+            }
+            case 8: {
+                return sorter.sortByUrgencyHig(token, available);
+            }
+            case 9: {
+                return sorter.sortByUrgencyLow(token, available);
+            }
+            default: {
+                log.error("Error type of sorting");
+
+                return null;
+            }
+        }
+    }
+
+    @Transactional
+    public TicketDTO createTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
+        log.info("Creating ticket {}", ticketDTO);
+
+       Ticket ticket=ticketUtil.createTicket(ticketDTO,userEmail);
+       log.info(ticket.toString());
+
+        kafkaTemplate.send("historyTopic", new HistorySaveEvent(ticket, LocalDate.now(), Action.TICKET_IS_CREATED, userService.getByUserEmail(userEmail), "Creating new ticket"));
+        historyService.createNewHistory
+                (new History(ticket, Action.TICKET_IS_CREATED, userService.getByUserEmail(userEmail), "Creating new ticket"));
+        ticketsRepository.save(ticket);
+        return null;
+    }
+
+    @Transactional
+    public TicketDTO updateTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
+        log.info("Updating ticket {}", ticketDTO);
+
+        User user = userService.getByUserEmail(userEmail);
+        Ticket ticket = TicketMapper.INSTANCE.toTicket(ticketDTO);
+        historyService.createNewHistory
+                (new History(ticket, Action.TICKET_IS_EDITED, user, "Updating ticket"));
+
+        return TicketMapper.INSTANCE.fromTicket(ticketsRepository.save(ticket));
+    }
+
+    @Transactional
+    public Ticket updateTicketState(Ticket ticket, String state, String userEmail) throws EntityNotFoundException {
+        log.info("Changing state ticket {}, to state {}", ticket, state);
+
+        State state1 = State.valueOf(state);
+        log.info(state1.name());
+        ticket.setStateId(state1);
+
+        ticketsRepository.save(ticket);
+
+        User user = userService.getByUserEmail(userEmail);
+        historyService.createNewHistory(History.builder()
+                .ticket(ticket)
+                .user(user)
+                .date(LocalDate.now())
+                .action(Action.TICKET_STATUS_IS_CHANGED)
+                .description("Changed status to " + state1.name())
+                .build());
+
+        return ticket;
     }
 
 }

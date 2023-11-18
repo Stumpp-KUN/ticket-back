@@ -7,12 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="spring-cloud-config" />
+        <module name="security-service" />
         <module name="api-gateway" />
+        <module name="history-service" />
         <module name="order-service" />
         <module name="eureka-server" />
-        <module name="spring-cloud-config" />
+        <module name="mail-service" />
         <module name="ticket-ordering" />
-        <module name="security-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -20,6 +22,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
+      <module name="history-service" options="-parameters" />
+      <module name="mail-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="security-service" options="-parameters" />
       <module name="spring-cloud-config" options="-parameters" />

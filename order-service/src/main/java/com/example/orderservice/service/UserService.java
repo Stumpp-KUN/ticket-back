@@ -1,5 +1,6 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.entity.Role;
 import com.example.orderservice.entity.User;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.repository.UserRepository;
@@ -28,5 +29,19 @@ public class UserService {
 
         return userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException("There is not user with email "+userEmail));
+    }
+
+    public User getManager() throws EntityNotFoundException {
+        log.info("Getting random manager to assign ticket");
+
+        return userRepository.findUserByRole(Role.MANAGER)
+                .orElseThrow(()->new EntityNotFoundException("No managers"));
+    }
+
+    public User getEngineer() throws EntityNotFoundException {
+        log.info("Getting random engineer to approve ticket");
+
+        return userRepository.findUserByRole(Role.ENGINEER)
+                .orElseThrow(()->new EntityNotFoundException("No engineers"));
     }
 }

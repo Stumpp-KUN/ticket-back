@@ -1,20 +1,18 @@
 package com.example.orderservice.util;
 
-import com.example.orderservice.entity.Attachment;
-import com.example.orderservice.entity.Ticket;
+import com.example.orderservice.dto.TicketDTO;
+import com.example.orderservice.entity.*;
 import com.example.orderservice.exception.EntityNotFoundException;
+import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.repository.TicketsRepository;
-import com.example.orderservice.repository.UserRepository;
 import com.example.orderservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +20,7 @@ import java.util.Map;
 public class TicketUtil {
     private final TicketsRepository ticketsRepository;
     private final UserService userService;
+    private final CategoryRepository categoryRepository;
 
     public List<Ticket> findTicketByRole(Jwt token) throws EntityNotFoundException {
         if (token.getClaim("realm_access") != null) {
@@ -30,18 +29,20 @@ public class TicketUtil {
             if (realmAccess.containsKey("roles")) {
                 List<String> realmRoles = (List<String>) realmAccess.get("roles");
                 if (realmRoles.contains("EMPLOYEE")) {
-                    System.out.println(userEmail);
-                return ticketsRepository.findAllByAssigneer(userService.getByUserEmail(userEmail));
+                return ticketsRepository.findAllByOwnerId(userService.getByUserEmail(userEmail));
                 } else if (realmRoles.contains("MANAGER")) {
-                    List<Ticket> managerTicket = ticketsRepository.findAllByAssigneer(userService.getByUserEmail(userEmail));
-                    List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllAssigneeEmployeeAndStateNew();
+                    User user=userService.getByUserEmail(userEmail);
+                    log.info(user.toString());
+                    List<Ticket> managerTicket = ticketsRepository.findAllByOwnerId(user);
+                    List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllOwnerEmployeeAndStateNew();
                     List<Ticket> approverAndStatus = ticketsRepository.findTicketsByApproverAndStates(userEmail);
 
-                    List<Ticket> allManagerTickets = new ArrayList<>();
-                    allManagerTickets.addAll(managerTicket);
-                    allManagerTickets.addAll(employeeTicketsAtNewStatus);
-                    allManagerTickets.addAll(approverAndStatus);
+                    HashSet<Ticket> uniqueTickets= new HashSet<>();
+                    uniqueTickets.addAll(managerTicket);
+                    uniqueTickets.addAll(employeeTicketsAtNewStatus);
+                    uniqueTickets.addAll(approverAndStatus);
 
+                    List<Ticket> allManagerTickets = new ArrayList<>(uniqueTickets);
                     return allManagerTickets;
 
                 } else if (realmRoles.contains("ENGINEER")) {
@@ -64,7 +65,7 @@ public class TicketUtil {
     public List<Ticket> findOwnTickets(Jwt token) throws EntityNotFoundException {
         if (token.getClaim("realm_access") != null) {
             String userEmail = token.getClaim("email");
-            return ticketsRepository.findAllByAssigneer
+            return ticketsRepository.findAllByOwnerId
                     (userService
                             .getByUserEmail(userEmail)
             );
@@ -72,6 +73,20 @@ public class TicketUtil {
         else new EntityNotFoundException("Incorrect role");
         return null;
 
+    }
+
+    public Ticket createTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
+        Ticket ticket = new Ticket();
+        ticket.setUrgencyId(Urgency.valueOf(ticketDTO.getUrgencyId()));
+        ticket.setDesiredResolutionDate(ticketDTO.getDesiredResolutionDate());
+        ticket.setName(ticketDTO.getName());
+        ticket.setDescription(ticketDTO.getDescription());
+        User user = userService.getByUserEmail(userEmail);
+        ticket.setCategory_id(categoryRepository.findCategoryByName(ticketDTO.getCategory_id()).get());
+        ticket.setCreatedOn(LocalDate.now());
+        ticket.setStateId(State.NEW);
+        ticket.setOwnerId(user);
+        return ticket;
     }
 
     private List<Attachment> attachmentCheck(List<Attachment> attachments){
@@ -87,7 +102,7 @@ public class TicketUtil {
                 log.error("Attachment extensions is valid");
             }
             if (fileSize > 5 * 1024 * 1024) {
-                log.error("The size of attached file should not be greater than 5 MB. Please select another file.");
+                log.error("The size of attached file should not be greater than 5 MB");
                 attachment.setBlob(null);
             }
         }

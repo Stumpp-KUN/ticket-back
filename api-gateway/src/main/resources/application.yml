@@ -20,6 +20,12 @@ spring:
           predicates:
             - Path=/api/v1/ticket/**
 
+        - id: mail-service
+          uri: lb://MAIL-SERVICE
+          predicates:
+            - Path=/mail/**
+
+
   security:
     oauth2:
       resourceserver:

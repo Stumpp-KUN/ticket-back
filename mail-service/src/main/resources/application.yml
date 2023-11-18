@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: mail-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME:stumpps13@gmail.com}
+    password: ${EMAIL_PASSWORD:adigsjcpniwsneqz}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka

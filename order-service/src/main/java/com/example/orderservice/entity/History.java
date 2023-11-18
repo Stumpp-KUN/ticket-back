@@ -18,7 +18,7 @@ public class History {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(columnDefinition = "ticket_id")
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
     private LocalDate date;
@@ -27,14 +27,14 @@ public class History {
     private Action action;
 
     @ManyToOne
-    @JoinColumn(columnDefinition = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     private String description;
 
-    public History(Ticket ticket, LocalDate date, Action action, User user, String description) {
+    public History(Ticket ticket, Action action, User user, String description) {
         this.ticket = ticket;
-        this.date = date;
+        this.date = LocalDate.now();
         this.action = action;
         this.user = user;
         this.description = description;
