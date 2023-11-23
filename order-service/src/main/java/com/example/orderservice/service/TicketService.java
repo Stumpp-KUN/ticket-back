@@ -126,11 +126,11 @@ public class TicketService {
     public TicketDTO createTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
         log.info("Creating ticket {}", ticketDTO);
 
-        Ticket ticket=ticketUtil.createTicket(ticketDTO,userEmail);
+        Ticket ticket = ticketUtil.createTicket(ticketDTO, userEmail);
         log.info(ticket.toString());
 
         try {
-            Ticket savingTicket=ticketsRepository.save(ticket);
+            Ticket savingTicket = ticketsRepository.save(ticket);
             kafkaTemplate.send("historyTopic", HistorySaveEvent.builder()
                     .ticketId(savingTicket.getId())
                     .userId(userService.getByUserEmail(userEmail).getId())
@@ -166,22 +166,29 @@ public class TicketService {
         log.info(state1.name());
         ticket.setStateId(state1);
 
-        Ticket savingTicket = ticketsRepository.save(ticket);
         User user = userService.getByUserEmail(userEmail);
+
+
+        if (state1 == State.APPROVED) {
+            log.info("Added new approver");
+            ticket.setApprover(user);
+        }
+
+        Ticket savingTicket = ticketsRepository.save(ticket);
 
         try {
             kafkaTemplate.send("historyTopic", HistorySaveEvent.builder()
                     .ticketId(savingTicket.getId())
                     .userId(user.getId())
                     .action(ActionDTO.TICKET_STATUS_IS_CHANGED)
-                    .description("Changed ticket status info to "+state1.name())
+                    .description("Changed ticket status info to " + state1.name())
                     .build());
 
             kafkaTemplateMail.send("mailTopic", MailEvent.builder()
                     .mail(savingTicket.getOwnerId().getEmail())
                     .subject("ATTENTION!")
-                    .message("Hello, "+user.getFirstName()+
-                            ". Your ticket status "+ticket.getId() + ticket.getName() +
+                    .message("Hello, " + user.getFirstName() +
+                            ". Your ticket status " + ticket.getId() + ticket.getName() +
                             " was changed, to " + savingTicket.getStateId() +
                             " status. Regards, ticket-ordering")
                     .subject("Ticket status is changed")
