@@ -1,0 +1,14 @@
+package com.example.orderservice.event.dto;
+
+public enum ActionDTO {
+    TICKET_IS_CREATED,
+    TICKET_IS_EDITED,
+    TICKET_STATUS_IS_CHANGED,
+    FILE_ATTACHED,
+    FILE_REMOVED,
+    ASSIGNER_ADDED,
+    ASSIGNER_REMOVED,
+    CATEGORY_CHANGED,
+    DESCRIPTION_CHANGED,
+    COMMENT_ADDED
+}

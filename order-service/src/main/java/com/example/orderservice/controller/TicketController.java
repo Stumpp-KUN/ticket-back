@@ -3,6 +3,7 @@ package com.example.orderservice.controller;
 import com.example.orderservice.dto.TicketDTO;
 import com.example.orderservice.entity.Ticket;
 import com.example.orderservice.exception.EntityNotFoundException;
+import com.example.orderservice.exception.KafkaException;
 import com.example.orderservice.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class TicketController {
     }
 
     @PutMapping("/update/state")
-    public ResponseEntity<Ticket> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException {
+    public ResponseEntity<Ticket> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         return ResponseEntity.ok(ticketService.updateTicketState(ticket,state,userEmail));
     }
 

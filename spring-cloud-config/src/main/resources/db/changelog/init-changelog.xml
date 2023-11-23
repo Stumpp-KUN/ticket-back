@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="createCategoryTable" author="KirillBychkov">
-        <createTable tableName="Category">
+        <createTable tableName="category">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -13,7 +13,7 @@
     </changeSet>
 
     <changeSet id="createUsersTable" author="KirillBychkov">
-        <createTable tableName="Users">
+        <createTable tableName="users">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -26,7 +26,7 @@
     </changeSet>
 
     <changeSet id="createTicketTable" author="KirillBychkov">
-        <createTable tableName="Ticket">
+        <createTable tableName="ticket">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -44,7 +44,7 @@
     </changeSet>
 
     <changeSet id="createAttachmentTable" author="KirillBychkov">
-        <createTable tableName="Attachment">
+        <createTable tableName="attachment">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -55,7 +55,7 @@
     </changeSet>
 
     <changeSet id="createHistoryTable" author="KirillBychkov">
-        <createTable tableName="History">
+        <createTable tableName="history">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -68,7 +68,7 @@
     </changeSet>
 
     <changeSet id="createCommentTable" author="KirillBychkov">
-        <createTable tableName="Comment">
+        <createTable tableName="comment">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -80,7 +80,7 @@
     </changeSet>
 
     <changeSet id="createFeedbackTable" author="KirillBychkov">
-        <createTable tableName="Feedback">
+        <createTable tableName="feedback">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -94,16 +94,16 @@
 
 
     <changeSet id="addForeignKeys" author="KirillBychkov">
-        <addForeignKeyConstraint baseTableName="Ticket" baseColumnNames="assignee_id"
-                                 referencedTableName="Users" referencedColumnNames="id" constraintName="FK_Ticket_Users_assignee_id"/>
-        <addForeignKeyConstraint baseTableName="Ticket" baseColumnNames="owner_id"
-                                 referencedTableName="Users" referencedColumnNames="id" constraintName="FK_Ticket_Users_owner_id"/>
-        <addForeignKeyConstraint baseTableName="Ticket" baseColumnNames="category_id"
-                                 referencedTableName="Category" referencedColumnNames="id" constraintName="FK_Ticket_Category_category_id"/>
-        <addForeignKeyConstraint baseTableName="Ticket" baseColumnNames="approved_id"
-                                 referencedTableName="Users" referencedColumnNames="id" constraintName="FK_Ticket_Users_approved_id"/>
-        <addForeignKeyConstraint baseTableName="Attachment" baseColumnNames="ticket_id"
-                                 referencedTableName="Ticket" referencedColumnNames="id" constraintName="FK_Attachment_Ticket_ticket_id"/>
+        <addForeignKeyConstraint baseTableName="ticket" baseColumnNames="assignee_id"
+                                 referencedTableName="users" referencedColumnNames="id" constraintName="FK_Ticket_Users_assignee_id"/>
+        <addForeignKeyConstraint baseTableName="ticket" baseColumnNames="owner_id"
+                                 referencedTableName="users" referencedColumnNames="id" constraintName="FK_Ticket_Users_owner_id"/>
+        <addForeignKeyConstraint baseTableName="ticket" baseColumnNames="category_id"
+                                 referencedTableName="category" referencedColumnNames="id" constraintName="FK_Ticket_Category_category_id"/>
+        <addForeignKeyConstraint baseTableName="ticket" baseColumnNames="approved_id"
+                                 referencedTableName="users" referencedColumnNames="id" constraintName="FK_Ticket_Users_approved_id"/>
+        <addForeignKeyConstraint baseTableName="attachment" baseColumnNames="ticket_id"
+                                 referencedTableName="ticket" referencedColumnNames="id" constraintName="FK_Attachment_Ticket_ticket_id"/>
 
     </changeSet>
 </databaseChangeLog>

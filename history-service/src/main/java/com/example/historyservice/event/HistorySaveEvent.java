@@ -1,6 +1,6 @@
-package com.example.orderservice.event;
+package com.example.historyservice.event;
 
-import com.example.orderservice.event.dto.ActionDTO;
+import com.example.historyservice.event.dto.Action;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class HistorySaveEvent {
 
     private Long ticketId;
 
-    private ActionDTO action;
+    private Action action;
 
     private Long userId;
 

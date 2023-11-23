@@ -10,6 +10,8 @@ spring.cloud.gateway:
       lower-case-service-id: true
 
 spring:
+  application:
+    name: API-GATEWAY
   main:
     web-application-type: reactive
   cloud:
@@ -24,6 +26,11 @@ spring:
           uri: lb://MAIL-SERVICE
           predicates:
             - Path=/mail/**
+
+        - id: history-service
+          uri: lb://HISTORY-SERVICE
+          predicates:
+            - Path=/api/v1/history/**
 
 
   security:

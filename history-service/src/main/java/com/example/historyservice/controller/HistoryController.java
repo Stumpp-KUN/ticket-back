@@ -1,8 +1,9 @@
-package com.example.orderservice.controller;
+package com.example.historyservice.controller;
 
-import com.example.orderservice.entity.History;
-import com.example.orderservice.exception.EntityNotFoundException;
-import com.example.orderservice.service.HistoryService;
+
+import com.example.historyservice.entity.History;
+import com.example.historyservice.service.HistoryService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/ticket/history")
+@RequestMapping("/api/v1/history")
 @RequiredArgsConstructor
 public class HistoryController {
 
@@ -24,3 +25,4 @@ public class HistoryController {
         return ResponseEntity.ok(historyService.getAllHistory(ticketId));
     }
 }
+
