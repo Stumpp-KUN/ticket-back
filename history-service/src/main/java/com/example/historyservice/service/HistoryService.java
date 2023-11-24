@@ -1,6 +1,7 @@
 package com.example.historyservice.service;
 
 import com.example.historyservice.entity.History;
+import com.example.historyservice.enums.Action;
 import com.example.historyservice.event.HistorySaveEvent;
 import com.example.historyservice.mapper.HistoryMapper;
 import com.example.historyservice.repository.HistoryRepository;
@@ -30,7 +31,7 @@ public class HistoryService {
 
         History history=HistoryMapper.INSTANCE.mapToHistory(historySaveEvent);
 
-        history.setAction(com.example.historyservice.entity.Action.valueOf(historySaveEvent.getAction().name()));
+        history.setAction(Action.valueOf(historySaveEvent.getAction().name()));
         history.setDate(LocalDate.now());
 
         return historyRepository.save(history);

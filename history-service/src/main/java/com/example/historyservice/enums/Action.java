@@ -1,4 +1,4 @@
-package com.example.historyservice.entity;
+package com.example.historyservice.enums;
 
 public enum Action {
     TICKET_IS_CREATED,
