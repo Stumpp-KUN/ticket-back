@@ -3,8 +3,8 @@ package com.example.orderservice.util;
 import com.example.orderservice.dto.TicketDTO;
 import com.example.orderservice.entity.*;
 import com.example.orderservice.exception.EntityNotFoundException;
-import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.repository.TicketsRepository;
+import com.example.orderservice.service.CategoryService;
 import com.example.orderservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.*;
 public class TicketUtil {
     private final TicketsRepository ticketsRepository;
     private final UserService userService;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     public List<Ticket> findTicketByRole(Jwt token) throws EntityNotFoundException {
         if (token.getClaim("realm_access") != null) {
@@ -31,7 +31,7 @@ public class TicketUtil {
                 if (realmRoles.contains("EMPLOYEE")) {
                 return ticketsRepository.findAllByOwnerId(userService.getByUserEmail(userEmail));
                 } else if (realmRoles.contains("MANAGER")) {
-                    User user=userService.getByUserEmail(userEmail);
+                    User user= userService.getByUserEmail(userEmail);
                     log.info(user.toString());
                     List<Ticket> managerTicket = ticketsRepository.findAllByOwnerId(user);
                     List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllOwnerEmployeeAndStateNew();
@@ -82,7 +82,7 @@ public class TicketUtil {
         ticket.setName(ticketDTO.getName());
         ticket.setDescription(ticketDTO.getDescription());
         User user = userService.getByUserEmail(userEmail);
-        ticket.setCategory_id(categoryRepository.findCategoryByName(ticketDTO.getCategory_id()).get());
+        ticket.setCategory_id(categoryService.findCategoryByName(ticketDTO.getCategory_id()));
         ticket.setCreatedOn(LocalDate.now());
         ticket.setStateId(State.NEW);
         ticket.setOwnerId(user);
