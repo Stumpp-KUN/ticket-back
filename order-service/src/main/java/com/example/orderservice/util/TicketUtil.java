@@ -34,24 +34,34 @@ public class TicketUtil {
                     User user=userService.getByUserEmail(userEmail);
                     log.info(user.toString());
                     List<Ticket> managerTicket = ticketsRepository.findAllByOwnerId(user);
-                    List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllOwnerEmployeeAndStateNew();
-                    List<Ticket> approverAndStatus = ticketsRepository.findTicketsByApproverAndStates(userEmail);
+                    List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllOwnerRoleAndState(Role.EMPLOYEE, State.NEW);
+                    List<Ticket> approverAndStatusApproved = ticketsRepository.findTicketsByApproverAndStates(userEmail,State.APPROVED);
+                    List<Ticket> approverAndStatusDeclined = ticketsRepository.findTicketsByApproverAndStates(userEmail,State.DECLINED);
+                    List<Ticket> approverAndStatusCancelled = ticketsRepository.findTicketsByApproverAndStates(userEmail,State.CANCELLED);
+                    List<Ticket> approverAndStatusInProgress = ticketsRepository.findTicketsByApproverAndStates(userEmail,State.IN_PROGRESS);
+                    List<Ticket> approverAndStatusDone = ticketsRepository.findTicketsByApproverAndStates(userEmail,State.DONE);
 
                     HashSet<Ticket> uniqueTickets= new HashSet<>();
                     uniqueTickets.addAll(managerTicket);
                     uniqueTickets.addAll(employeeTicketsAtNewStatus);
-                    uniqueTickets.addAll(approverAndStatus);
+                    uniqueTickets.addAll(approverAndStatusApproved);
+                    uniqueTickets.addAll(approverAndStatusDeclined);
+                    uniqueTickets.addAll(approverAndStatusCancelled);
+                    uniqueTickets.addAll(approverAndStatusInProgress);
+                    uniqueTickets.addAll(approverAndStatusDone);
 
                     List<Ticket> allManagerTickets = new ArrayList<>(uniqueTickets);
                     return allManagerTickets;
 
                 } else if (realmRoles.contains("ENGINEER")) {
-                    List<Ticket> managerAndEmployeeTickets = ticketsRepository.findTicketsCreatedByEmployeesAndManagersInApprovedState();
-                    List<Ticket> assignTicketsInProgressAndDone = ticketsRepository.findTicketsByAssigneeInInProgressAndDoneStates(userEmail);
+                    List<Ticket> managerAndEmployeeTickets = ticketsRepository.findAllByStateId(State.APPROVED);
+                    List<Ticket> assignTicketsInProgress = ticketsRepository.findTicketsByAssigneeInStates(userEmail, State.IN_PROGRESS);
+                    List<Ticket> assignTicketsInDone = ticketsRepository.findTicketsByAssigneeInStates(userEmail, State.DONE);
 
                     List<Ticket> allEngineerTickets = new ArrayList<>();
                     allEngineerTickets.addAll(managerAndEmployeeTickets);
-                    allEngineerTickets.addAll(assignTicketsInProgressAndDone);
+                    allEngineerTickets.addAll(assignTicketsInProgress);
+                    allEngineerTickets.addAll(assignTicketsInDone);
 
                     return allEngineerTickets;
 
