@@ -1,5 +1,6 @@
 package com.example.historyservice.entity;
 
+import com.example.historyservice.enums.Action;
 import jakarta.persistence.*;
 import lombok.*;
 

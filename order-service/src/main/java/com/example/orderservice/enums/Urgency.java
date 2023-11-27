@@ -1,4 +1,4 @@
-package com.example.orderservice.entity;
+package com.example.orderservice.enums;
 
 public enum Urgency {
     CRITICAL,

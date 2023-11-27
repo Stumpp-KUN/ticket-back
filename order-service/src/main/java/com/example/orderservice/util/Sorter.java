@@ -1,14 +1,13 @@
 package com.example.orderservice.util;
 
 import com.example.orderservice.entity.Ticket;
-import com.example.orderservice.entity.Urgency;
+import com.example.orderservice.enums.Urgency;
 import com.example.orderservice.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

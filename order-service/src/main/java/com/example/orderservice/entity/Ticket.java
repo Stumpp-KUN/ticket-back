@@ -1,5 +1,7 @@
 package com.example.orderservice.entity;
 
+import com.example.orderservice.enums.State;
+import com.example.orderservice.enums.Urgency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

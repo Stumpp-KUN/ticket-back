@@ -37,7 +37,7 @@ public class TicketController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TicketDTO> updateTicket(@RequestBody @Valid TicketDTO ticketDTO, @RequestParam String userEmail) throws EntityNotFoundException {
+    public ResponseEntity<TicketDTO> updateTicket(@RequestBody @Valid TicketDTO ticketDTO, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         return ResponseEntity.ok(ticketService.updateTicket(ticketDTO,userEmail));
     }
 

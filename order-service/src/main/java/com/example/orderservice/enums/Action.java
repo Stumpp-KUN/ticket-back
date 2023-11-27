@@ -1,6 +1,6 @@
-package com.example.orderservice.event.dto;
+package com.example.orderservice.enums;
 
-public enum ActionDTO {
+public enum Action {
     TICKET_IS_CREATED,
     TICKET_IS_EDITED,
     TICKET_STATUS_IS_CHANGED,

@@ -1,6 +1,6 @@
 package com.example.orderservice.service;
 
-import com.example.orderservice.entity.Role;
+import com.example.orderservice.enums.Role;
 import com.example.orderservice.entity.User;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.repository.UserRepository;

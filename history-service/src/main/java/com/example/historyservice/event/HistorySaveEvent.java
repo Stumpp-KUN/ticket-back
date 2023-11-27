@@ -1,6 +1,6 @@
 package com.example.historyservice.event;
 
-import com.example.historyservice.event.dto.Action;
+import com.example.historyservice.enums.Action;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

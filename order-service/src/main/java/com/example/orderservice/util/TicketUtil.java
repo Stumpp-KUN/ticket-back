@@ -2,8 +2,9 @@ package com.example.orderservice.util;
 
 import com.example.orderservice.dto.TicketDTO;
 import com.example.orderservice.entity.*;
+import com.example.orderservice.enums.State;
+import com.example.orderservice.enums.Urgency;
 import com.example.orderservice.exception.EntityNotFoundException;
-import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.repository.TicketsRepository;
 import com.example.orderservice.service.UserService;
 import lombok.RequiredArgsConstructor;

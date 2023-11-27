@@ -1,5 +1,6 @@
 package com.example.orderservice.dto;
 
+import com.example.orderservice.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,6 @@ public class TicketDTO {
 
     private String urgencyId;
 
-    private String category_id;
+    private Category categoryId;
 
 }
