@@ -48,9 +48,9 @@ public class TicketService {
 
         User user = userService.getByUserEmail(userEmail);
 
-        List<Ticket> viewEmployeeTickets = ticketsRepository.findAllOwnerRoleAndState(Role.EMPLOYEE, State.NEW);
-        List<Ticket> declinedManagerTickets = ticketsRepository.findAllByOwnerIdAndStateId(user, State.DECLINED);
-        List<Ticket> allViewTickets = ticketsRepository.findAllByOwnerIdAndStateId(user, State.DRAFT);
+        List<Ticket> viewEmployeeTickets = ticketsRepository.findAllOwnerRoleAndState(Role.EMPLOYEE.name(), State.NEW.name());
+        List<Ticket> declinedManagerTickets = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DECLINED.name());
+        List<Ticket> allViewTickets = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DRAFT.name());
 
         allViewTickets.addAll(viewEmployeeTickets);
         allViewTickets.addAll(declinedManagerTickets);
@@ -62,8 +62,8 @@ public class TicketService {
 
         User user = userService.getByUserEmail(userEmail);
 
-        List<Ticket> ticketsDeclined = ticketsRepository.findAllByOwnerIdAndStateId(user, State.DECLINED);
-        List<Ticket> ticketsDraft = ticketsRepository.findAllByOwnerIdAndStateId(user, State.DRAFT);
+        List<Ticket> ticketsDeclined = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DECLINED.name());
+        List<Ticket> ticketsDraft = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DRAFT.name());
 
         ticketsDeclined.addAll(ticketsDraft);
 

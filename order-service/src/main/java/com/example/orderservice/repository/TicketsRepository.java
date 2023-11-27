@@ -18,29 +18,29 @@ public interface TicketsRepository extends JpaRepository<Ticket, Long> {
 
     @Query("""
             SELECT t FROM Ticket t 
-            WHERE t.ownerId=:user 
+            WHERE t.ownerId.id=:userId 
             AND t.stateId=:state
             """)
-    List<Ticket> findAllByOwnerIdAndStateId(User user, State state);
+    List<Ticket> findAllByOwnerIdAndStateId(Long userId, String state);
 
     @Query("""
             SELECT t FROM Ticket t 
             WHERE t.ownerId.role =:role 
-            AND t.stateId =:state
+            AND t.stateId=:state
             """)
-    List<Ticket> findAllOwnerRoleAndState(Role role, State state);
+    List<Ticket> findAllOwnerRoleAndState(String role, String state);
 
     @Query("""
             SELECT t FROM Ticket t 
-            WHERE t.approver.email = :approverEmail 
-            AND t.stateId=:state
+            WHERE t.approver.email=:approverEmail 
+            AND t.stateId IN ('APPROVED', 'DECLINED', 'CANCELLED', 'IN_PROGRESS', 'DONE')
             """)
-    List<Ticket> findTicketsByApproverAndStates(@Param("approverEmail") String approverEmail, State state);
+    List<Ticket> findTicketsByApproverAndStates(@Param("approverEmail") String approverEmail);
 
     @Query("""
             SELECT t FROM Ticket t 
-            WHERE t.assigneer.email = :assigneeEmail
+            WHERE t.assigneer.email=:assigneeEmail
             AND t.stateId=:state
             """)
-    List<Ticket> findTicketsByAssigneeInStates(@Param("assigneeEmail") String assigneeEmail, State state);
+    List<Ticket> findTicketsByAssigneeInStates(@Param("assigneeEmail") String assigneeEmail, String state);
 }
