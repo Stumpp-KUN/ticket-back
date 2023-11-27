@@ -48,9 +48,9 @@ public class TicketService {
 
         User user = userService.getByUserEmail(userEmail);
 
-        List<Ticket> viewEmployeeTickets = ticketsRepository.findAllOwnerEmployeeAndStateNew();
-        List<Ticket> declinedManagerTickets = ticketsRepository.findAllByOwnerIdAndStateId_Declined(user);
-        List<Ticket> allViewTickets = ticketsRepository.findAllByOwnerIdAndStateId_Draft(user);
+        List<Ticket> viewEmployeeTickets = ticketsRepository.findAllOwnerRoleAndState(Role.EMPLOYEE.name(), State.NEW.name());
+        List<Ticket> declinedManagerTickets = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DECLINED.name());
+        List<Ticket> allViewTickets = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DRAFT.name());
 
         allViewTickets.addAll(viewEmployeeTickets);
         allViewTickets.addAll(declinedManagerTickets);
@@ -62,13 +62,23 @@ public class TicketService {
 
         User user = userService.getByUserEmail(userEmail);
 
-        return ticketsRepository.findAllByOwnerIdAndStateId_DraftAndStateId_Declined(user);
+        List<Ticket> ticketsDeclined = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DECLINED.name());
+        List<Ticket> ticketsDraft = ticketsRepository.findAllByOwnerIdAndStateId(user.getId(), State.DRAFT.name());
+
+        ticketsDeclined.addAll(ticketsDraft);
+
+        return ticketsDeclined;
     }
 
     public List<Ticket> getTicketEngineerReview() {
         log.info("Getting tickets for engineer review");
 
-        return ticketsRepository.findAllApprovedAndInProgressTickets();
+        List<Ticket> approvedTickets = ticketsRepository.findAllByStateId(State.APPROVED.name());
+        List<Ticket> inProgressTickets = ticketsRepository.findAllByStateId(State.IN_PROGRESS.name());
+
+        approvedTickets.addAll(inProgressTickets);
+
+        return approvedTickets;
     }
 
     @Transactional
@@ -134,7 +144,7 @@ public class TicketService {
             kafkaTemplate.send("historyTopic", HistorySaveEvent.builder()
                     .ticketId(savingTicket.getId())
                     .userId(userService.getByUserEmail(userEmail).getId())
-                    .action(ActionDTO.TICKET_IS_CREATED)
+                    .action(Action.TICKET_IS_CREATED)
                     .description("Created ticket")
                     .build());
 
@@ -180,7 +190,7 @@ public class TicketService {
             kafkaTemplate.send("historyTopic", HistorySaveEvent.builder()
                     .ticketId(savingTicket.getId())
                     .userId(user.getId())
-                    .action(ActionDTO.TICKET_STATUS_IS_CHANGED)
+                    .action(Action.TICKET_STATUS_IS_CHANGED)
                     .description("Changed ticket status info to " + state1.name())
                     .build());
 
