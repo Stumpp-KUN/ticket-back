@@ -73,8 +73,8 @@ public class TicketService {
     public List<Ticket> getTicketEngineerReview() {
         log.info("Getting tickets for engineer review");
 
-        List<Ticket> approvedTickets = ticketsRepository.findAllByStateId(State.APPROVED);
-        List<Ticket> inProgressTickets = ticketsRepository.findAllByStateId(State.IN_PROGRESS);
+        List<Ticket> approvedTickets = ticketsRepository.findAllByStateId(State.APPROVED.name());
+        List<Ticket> inProgressTickets = ticketsRepository.findAllByStateId(State.IN_PROGRESS.name());
 
         approvedTickets.addAll(inProgressTickets);
 

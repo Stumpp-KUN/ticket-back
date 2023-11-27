@@ -46,7 +46,7 @@ public class TicketUtil {
                     return allManagerTickets;
 
                 } else if (realmRoles.contains("ENGINEER")) {
-                    List<Ticket> managerAndEmployeeTickets = ticketsRepository.findAllByStateId(State.APPROVED);
+                    List<Ticket> managerAndEmployeeTickets = ticketsRepository.findAllByStateId(State.APPROVED.name());
                     List<Ticket> assignTicketsInProgress = ticketsRepository.findTicketsByAssigneeInStates(userEmail, State.IN_PROGRESS.name());
                     List<Ticket> assignTicketsInDone = ticketsRepository.findTicketsByAssigneeInStates(userEmail, State.DONE.name());
 

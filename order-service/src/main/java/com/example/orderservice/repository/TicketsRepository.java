@@ -14,7 +14,7 @@ public interface TicketsRepository extends JpaRepository<Ticket, Long> {
 
     List<Ticket> findAllByOwnerId(User user);
 
-    List<Ticket> findAllByStateId(State state);
+    List<Ticket> findAllByStateId(String state);
 
     @Query("""
             SELECT t FROM Ticket t 
