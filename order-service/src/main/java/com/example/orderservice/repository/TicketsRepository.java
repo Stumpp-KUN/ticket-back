@@ -1,7 +1,5 @@
 package com.example.orderservice.repository;
 
-import com.example.orderservice.entity.Role;
-import com.example.orderservice.entity.State;
 import com.example.orderservice.entity.Ticket;
 import com.example.orderservice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,10 +16,10 @@ public interface TicketsRepository extends JpaRepository<Ticket, Long> {
 
     @Query("""
             SELECT t FROM Ticket t 
-            WHERE t.ownerId.id=:userId 
+            WHERE t.ownerId.email=:email 
             AND t.stateId=:state
             """)
-    List<Ticket> findAllByOwnerIdAndStateId(Long userId, String state);
+    List<Ticket> findAllByOwnerIdAndStateId(String email, String state);
 
     @Query("""
             SELECT t FROM Ticket t 

@@ -3,7 +3,6 @@ package com.example.mailservice.controller;
 import com.example.mailservice.entity.MailStructure;
 import com.example.mailservice.service.MailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

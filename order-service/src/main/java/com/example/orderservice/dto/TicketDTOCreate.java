@@ -1,6 +1,5 @@
 package com.example.orderservice.dto;
 
-import com.example.orderservice.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketDTO {
-
+public class TicketDTOCreate {
     private String name;
 
     private String description;
@@ -22,6 +20,5 @@ public class TicketDTO {
 
     private String urgencyId;
 
-    private Category categoryId;
-
+    private String category_id;
 }

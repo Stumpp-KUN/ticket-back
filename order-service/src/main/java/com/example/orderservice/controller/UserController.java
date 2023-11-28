@@ -1,6 +1,6 @@
 package com.example.orderservice.controller;
 
-import com.example.orderservice.entity.User;
+import com.example.orderservice.dto.UserDTO;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) throws EntityNotFoundException {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) throws EntityNotFoundException {
         return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }
 }

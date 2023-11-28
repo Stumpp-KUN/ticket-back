@@ -1,6 +1,7 @@
 package com.example.orderservice.controller;
 
-import com.example.orderservice.dto.TicketDTO;
+import com.example.orderservice.dto.TicketDTOCreate;
+import com.example.orderservice.dto.TicketDTORead;
 import com.example.orderservice.entity.Ticket;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.exception.KafkaException;
@@ -22,47 +23,47 @@ public class TicketController {
     private final TicketService ticketService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicket(@PathVariable Long id) throws EntityNotFoundException {
-        return ResponseEntity.ok(ticketService.getTicket(id));
+    public ResponseEntity<TicketDTORead> getTicket(@PathVariable Long id) throws EntityNotFoundException {
+        return ResponseEntity.ok(ticketService.getById(id));
     }
 
     @GetMapping("/collect")
-    public ResponseEntity<List<Ticket>> collect(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer type, @RequestParam Boolean available) throws EntityNotFoundException {
+    public ResponseEntity<List<TicketDTORead>> collect(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer type, @RequestParam Boolean available) throws EntityNotFoundException {
         return ResponseEntity.ok(ticketService.getTickets(jwt, type, available));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDTO, @RequestParam String userEmail) throws EntityNotFoundException {
-        return ResponseEntity.ok(ticketService.createTicket(ticketDTO, userEmail));
+    public ResponseEntity<TicketDTORead> createTicket(@RequestBody TicketDTOCreate ticketDTOCreate, @RequestParam String userEmail) throws EntityNotFoundException {
+        return ResponseEntity.ok(ticketService.createTicket(ticketDTOCreate, userEmail));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TicketDTO> updateTicket(@RequestBody @Valid TicketDTO ticketDTO, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        return ResponseEntity.ok(ticketService.updateTicket(ticketDTO,userEmail));
+    public ResponseEntity<TicketDTORead> updateTicket(@RequestBody @Valid TicketDTORead ticketDTORead, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+        return ResponseEntity.ok(ticketService.updateTicket(ticketDTORead,userEmail));
     }
 
     @PutMapping("/update/state")
-    public ResponseEntity<Ticket> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+    public ResponseEntity<TicketDTORead> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         return ResponseEntity.ok(ticketService.updateTicketState(ticket,state,userEmail));
     }
 
     @PutMapping("/update/assign")
-    public ResponseEntity<Ticket> updateTicketAssigner(@RequestBody Ticket ticket, @RequestParam String userEmail) throws EntityNotFoundException {
+    public ResponseEntity<TicketDTORead> updateTicketAssigner(@RequestBody Ticket ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         return ResponseEntity.ok(ticketService.updateAssigner(ticket,userEmail));
     }
 
     @GetMapping("/review/manager")
-    public ResponseEntity<List<Ticket>> findAllTicketForManagerReview(@RequestParam String userEmail) throws EntityNotFoundException {
+    public ResponseEntity<List<TicketDTORead>> findAllTicketForManagerReview(@RequestParam String userEmail) throws EntityNotFoundException {
         return ResponseEntity.ok(ticketService.getTicketManagerReview(userEmail));
     }
 
     @GetMapping("/review/employee")
-    public ResponseEntity<List<Ticket>> findAllTicketForEmployeeChange(@RequestParam String userEmail) throws EntityNotFoundException {
+    public ResponseEntity<List<TicketDTORead>> findAllTicketForEmployeeChange(@RequestParam String userEmail) throws EntityNotFoundException {
         return ResponseEntity.ok(ticketService.getTicketEmployeeReview(userEmail));
     }
 
     @GetMapping("/review/engineer")
-    public ResponseEntity<List<Ticket>> findAllTicketForEngineerReview() {
+    public ResponseEntity<List<TicketDTORead>> findAllTicketForEngineerReview() {
         return ResponseEntity.ok(ticketService.getTicketEngineerReview());
     }
 

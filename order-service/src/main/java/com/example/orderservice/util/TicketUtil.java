@@ -1,10 +1,14 @@
 package com.example.orderservice.util;
 
-import com.example.orderservice.dto.TicketDTO;
-import com.example.orderservice.entity.*;
+import com.example.orderservice.dto.TicketDTOCreate;
+import com.example.orderservice.entity.Attachment;
+import com.example.orderservice.entity.Ticket;
+import com.example.orderservice.entity.User;
+import com.example.orderservice.enums.Role;
 import com.example.orderservice.enums.State;
-import com.example.orderservice.enums.Urgency;
 import com.example.orderservice.exception.EntityNotFoundException;
+import com.example.orderservice.mapper.TicketMapper;
+import com.example.orderservice.mapper.UserMapper;
 import com.example.orderservice.repository.TicketsRepository;
 import com.example.orderservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +25,8 @@ import java.util.*;
 public class TicketUtil {
     private final TicketsRepository ticketsRepository;
     private final UserService userService;
-    private final CategoryRepository categoryRepository;
+    private final TicketMapper ticketMapper;
+    private final UserMapper userMapper;
 
     public List<Ticket> findTicketByRole(Jwt token) throws EntityNotFoundException {
         if (token.getClaim("realm_access") != null) {
@@ -30,9 +35,9 @@ public class TicketUtil {
             if (realmAccess.containsKey("roles")) {
                 List<String> realmRoles = (List<String>) realmAccess.get("roles");
                 if (realmRoles.contains("EMPLOYEE")) {
-                return ticketsRepository.findAllByOwnerId(userService.getByUserEmail(userEmail));
+                return ticketsRepository.findAllByOwnerId(userMapper.toEntity(userService.getByUserEmail(userEmail)));
                 } else if (realmRoles.contains("MANAGER")) {
-                    User user=userService.getByUserEmail(userEmail);
+                    User user=userMapper.toEntity(userService.getByUserEmail(userEmail));
                     log.info(user.toString());
                     List<Ticket> managerTicket = ticketsRepository.findAllByOwnerId(user);
                     List<Ticket> employeeTicketsAtNewStatus = ticketsRepository.findAllOwnerRoleAndState(Role.EMPLOYEE.name(), State.NEW.name());
@@ -69,23 +74,16 @@ public class TicketUtil {
         if (token.getClaim("realm_access") != null) {
             String userEmail = token.getClaim("email");
             return ticketsRepository.findAllByOwnerId
-                    (userService
-                            .getByUserEmail(userEmail)
-            );
+                    (userMapper.toEntity(userService.getByUserEmail(userEmail)));
         }
         else new EntityNotFoundException("Incorrect role");
         return null;
 
     }
 
-    public Ticket createTicket(TicketDTO ticketDTO, String userEmail) throws EntityNotFoundException {
-        Ticket ticket = new Ticket();
-        ticket.setUrgencyId(Urgency.valueOf(ticketDTO.getUrgencyId()));
-        ticket.setDesiredResolutionDate(ticketDTO.getDesiredResolutionDate());
-        ticket.setName(ticketDTO.getName());
-        ticket.setDescription(ticketDTO.getDescription());
-        User user = userService.getByUserEmail(userEmail);
-        ticket.setCategory_id(categoryRepository.findCategoryByName(ticketDTO.getCategory_id()).get());
+    public Ticket createTicket(TicketDTOCreate ticketDTOCreate, String userEmail) throws EntityNotFoundException {
+        Ticket ticket = ticketMapper.toEntityFromCreate(ticketDTOCreate);
+        User user = userMapper.toEntity(userService.getByUserEmail(userEmail));
         ticket.setCreatedOn(LocalDate.now());
         ticket.setStateId(State.NEW);
         ticket.setOwnerId(user);

@@ -1,6 +1,6 @@
 package com.example.orderservice.controller;
 
-import com.example.orderservice.entity.Comment;
+import com.example.orderservice.dto.CommentDTO;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/collect/{ticketId}")
-    public ResponseEntity<List<Comment>> getAllCommentsByTicketId(@PathVariable Long ticketId) throws EntityNotFoundException {
+    public ResponseEntity<List<CommentDTO>> getAllCommentsByTicketId(@PathVariable Long ticketId) throws EntityNotFoundException {
         return ResponseEntity.ok(commentService.getAllCommentByTicketId(ticketId));
     }
 }
