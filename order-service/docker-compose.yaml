@@ -1,0 +1,14 @@
+version: '2'
+services:
+
+  postgres:
+    image: postgres:16.0
+    hostname: 6ebf8cc8f5d6
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_DB: ticket
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+    volumes:
+      - /var/lib/postgresql/data
