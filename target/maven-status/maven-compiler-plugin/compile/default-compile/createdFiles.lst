@@ -1,0 +1,11 @@
+com\example\orderservice\entity\User.class
+com\example\orderservice\OrderServiceApplication.class
+com\example\orderservice\entity\State.class
+com\example\orderservice\entity\Ticket.class
+com\example\orderservice\entity\Ticket$TicketBuilder.class
+com\example\orderservice\service\TicketService.class
+com\example\orderservice\controller\TicketController.class
+com\example\orderservice\repository\TicketRepository.class
+com\example\orderservice\entity\Urgency.class
+com\example\orderservice\entity\Role.class
+com\example\orderservice\entity\User$UserBuilder.class
