@@ -81,7 +81,7 @@ public class TicketUtil {
 
     }
 
-    public Ticket createTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException {
+    public Ticket mapTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException {
         Ticket ticket = ticketMapper.toEntityFromCreate(ticketCreateDTO);
         User user = userMapper.toEntity(userService.getByUserEmail(userEmail));
         ticket.setCreatedOn(LocalDate.now());

@@ -60,6 +60,4 @@ public class Ticket implements Comparable<Ticket> {
         return this.desiredResolutionDate.compareTo(o.desiredResolutionDate);
     }
 
-//    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Attachment> attachments = new ArrayList<>();
 }

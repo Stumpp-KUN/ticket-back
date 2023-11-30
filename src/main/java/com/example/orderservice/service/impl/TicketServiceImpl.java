@@ -154,7 +154,7 @@ public class TicketServiceImpl implements TicketService {
     public void createTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException {
         log.info("Creating ticket {}", ticketCreateDTO);
 
-        Ticket ticket = ticketUtil.createTicket(ticketCreateDTO, userEmail);
+        Ticket ticket = ticketUtil.mapTicket(ticketCreateDTO, userEmail);
         log.info(ticket.toString());
 
         try {
