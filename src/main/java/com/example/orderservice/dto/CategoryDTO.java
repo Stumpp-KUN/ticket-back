@@ -9,15 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDTO {
-
-    private Long id;
-
-    private Long userId;
-
-    private String text;
-
-    private String date;
-
-    private Long ticketId;
+public class CategoryDTO {
+    private String name;
 }

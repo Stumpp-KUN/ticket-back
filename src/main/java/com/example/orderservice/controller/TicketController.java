@@ -45,13 +45,13 @@ public class TicketController {
     }
 
     @PutMapping("/update/state")
-    public ResponseEntity<Void> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+    public ResponseEntity<Void> updateTicketState(@RequestBody TicketReadDTO ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         ticketService.updateTicketState(ticket,state,userEmail);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/assign")
-    public ResponseEntity<Void> updateTicketAssigner(@RequestBody Ticket ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+    public ResponseEntity<Void> updateTicketAssigner(@RequestBody TicketReadDTO ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
         ticketService.updateAssigner(ticket,userEmail);
         return ResponseEntity.ok().build();
     }

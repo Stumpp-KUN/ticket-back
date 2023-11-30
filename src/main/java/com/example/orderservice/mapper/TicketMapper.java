@@ -18,6 +18,9 @@ public abstract class TicketMapper {
     @Autowired
     private CategoryServiceImpl categoryServiceImpl;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     public abstract Ticket toEntity(TicketReadDTO ticketReadDTO);
 
     public abstract TicketReadDTO fromEntity(Ticket ticket);
@@ -40,7 +43,7 @@ public abstract class TicketMapper {
             return null;
         }
 
-        return categoryServiceImpl.getCategoryByName(category_name);
+        return categoryMapper.toEntity(categoryServiceImpl.getCategoryByName(category_name));
     }
 
     State mapStringToState(String state) {

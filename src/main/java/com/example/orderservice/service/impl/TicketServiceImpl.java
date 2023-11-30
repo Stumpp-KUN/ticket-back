@@ -97,8 +97,10 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public void updateAssigner(Ticket ticket, String userEmail) throws EntityNotFoundException, KafkaException {
-        log.info("Updating assigner, to ticket {}", ticket);
+    public void updateAssigner(TicketReadDTO ticketReadDTO, String userEmail) throws EntityNotFoundException, KafkaException {
+        log.info("Updating assigner, to ticket {}", ticketReadDTO);
+
+        Ticket ticket = ticketMapper.toEntity(ticketReadDTO);
 
         User user = parseUserDtoToUser(userService.getByUserEmail(userEmail));
 
@@ -206,8 +208,10 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public void updateTicketState(Ticket ticket, String state, String userEmail) throws EntityNotFoundException, KafkaException {
-        log.info("Changing state ticket {}, to state {}", ticket, state);
+    public void updateTicketState(TicketReadDTO ticketReadDTO, String state, String userEmail) throws EntityNotFoundException, KafkaException {
+        log.info("Changing state ticket {}, to state {}", ticketReadDTO, state);
+
+        Ticket ticket = ticketMapper.toEntity(ticketReadDTO);
 
         State state1 = State.valueOf(state);
         log.info(state1.name());

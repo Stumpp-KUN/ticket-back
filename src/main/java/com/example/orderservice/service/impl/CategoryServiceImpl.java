@@ -1,6 +1,8 @@
 package com.example.orderservice.service.impl;
 
+import com.example.orderservice.dto.CategoryDTO;
 import com.example.orderservice.entity.Category;
+import com.example.orderservice.mapper.CategoryMapper;
 import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +19,18 @@ import java.util.NoSuchElementException;
 public class CategoryServiceImpl implements CategoryService {
 
     public final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
-    public Category getById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(()-> new NoSuchElementException(""));
+    public CategoryDTO getById(Long id) {
+        return categoryMapper.fromEntity(
+                categoryRepository.findById(id).orElseThrow(()-> new NoSuchElementException("")));
     }
 
     @Override
-    public Category getCategoryByName(String name) {
-        return categoryRepository.findCategoryByName(name).orElseThrow(()->new NoSuchElementException(""));
+    public CategoryDTO getCategoryByName(String name) {
+        return categoryMapper.fromEntity(
+                categoryRepository.findCategoryByName(name).orElseThrow(()->new NoSuchElementException("")));
     }
 
 }
