@@ -17,7 +17,7 @@ public interface TicketService {
     List<TicketReadDTO> getTicketEmployeeReview(String userEmail) throws EntityNotFoundException;
     List<TicketReadDTO> getTicketEngineerReview();
     TicketReadDTO updateAssigner(Ticket ticket, String userEmail) throws EntityNotFoundException, KafkaException;
-    List<TicketReadDTO> getTickets(Jwt token, Integer type, Boolean available) throws EntityNotFoundException;
+    List<TicketReadDTO> getTickets(Jwt token, Integer type) throws EntityNotFoundException;
     TicketReadDTO createTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException;
     TicketReadDTO updateTicket(TicketReadDTO ticketReadDTO, String userEmail) throws EntityNotFoundException, KafkaException;
     TicketReadDTO updateTicketState(Ticket ticket, String state, String userEmail) throws EntityNotFoundException, KafkaException;

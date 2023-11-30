@@ -15,7 +15,6 @@ import com.example.orderservice.mapper.TicketMapper;
 import com.example.orderservice.mapper.UserMapper;
 import com.example.orderservice.repository.TicketsRepository;
 import com.example.orderservice.service.TicketService;
-import com.example.orderservice.util.Sorter;
 import com.example.orderservice.util.TicketUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +40,6 @@ public class TicketServiceImpl implements TicketService {
     private final TicketMapper ticketMapper;
     private final UserMapper userMapper;
 
-    private final Sorter sorter;
     private final TicketUtil ticketUtil;
 
     private final KafkaTemplate<String, HistorySaveEvent> kafkaTemplate;
@@ -67,7 +66,6 @@ public class TicketServiceImpl implements TicketService {
 
         allViewTickets.addAll(viewEmployeeTickets);
         allViewTickets.addAll(declinedManagerTickets);
-        System.out.println(allViewTickets.size());
         return parseFromEntityList(allViewTickets);
     }
 
@@ -132,39 +130,22 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketReadDTO> getTickets(Jwt token, Integer type, Boolean available) throws EntityNotFoundException {
+    public List<TicketReadDTO> getTickets(Jwt token, Integer type) throws EntityNotFoundException {
         switch (type) {
             case 1: {
-                return parseFromEntityList(sorter.getAllAvailable(token));
+                List<Ticket> tickets = ticketUtil.findTicketByRole(token);
+                Collections.sort(tickets);
+                return parseFromEntityList(tickets);
             }
             case 2: {
-                return parseFromEntityList(sorter.getOwnTickets(token));
-            }
-            case 3: {
-                return parseFromEntityList(sorter.sortById(token, available));
-            }
-            case 4: {
-                return parseFromEntityList(sorter.sortByName(token, available));
-            }
-            case 5: {
-                return parseFromEntityList(sorter.sortByNameInverse(token, available));
-            }
-            case 6: {
-                return parseFromEntityList(sorter.sortByDesiredDES(token, available));
-            }
-            case 7: {
-                return parseFromEntityList(sorter.sortByDesiredASC(token, available));
-            }
-            case 8: {
-                return parseFromEntityList(sorter.sortByUrgencyHig(token, available));
-            }
-            case 9: {
-                return parseFromEntityList(sorter.sortByUrgencyLow(token, available));
+                List<Ticket> tickets = ticketUtil.findOwnTickets(token);
+                Collections.sort(tickets);
+                return parseFromEntityList(tickets);
             }
             default: {
-                log.error("Error type of sorting");
+                log.error("Error type of tickets");
 
-                return null;
+                throw new EntityNotFoundException("There is not tickets with type "+type);
             }
         }
     }

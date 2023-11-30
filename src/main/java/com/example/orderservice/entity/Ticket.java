@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Ticket {
+public class Ticket implements Comparable<Ticket> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,6 +54,11 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "approver")
     private User approver;
+
+    @Override
+    public int compareTo(Ticket o) {
+        return this.desiredResolutionDate.compareTo(o.desiredResolutionDate);
+    }
 
 //    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Attachment> attachments = new ArrayList<>();

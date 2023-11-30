@@ -28,8 +28,8 @@ public class TicketController {
     }
 
     @GetMapping("/collect")
-    public ResponseEntity<List<TicketReadDTO>> collect(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer type, @RequestParam Boolean available) throws EntityNotFoundException {
-        return ResponseEntity.ok(ticketService.getTickets(jwt, type, available));
+    public ResponseEntity<List<TicketReadDTO>> collect(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer type) throws EntityNotFoundException {
+        return ResponseEntity.ok(ticketService.getTickets(jwt, type));
     }
 
     @PostMapping("/create")
