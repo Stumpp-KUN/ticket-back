@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 @Component
-public abstract class CategoryMapper {
-    public abstract Category toEntity(CategoryDTO categoryDTO);
-    public abstract CategoryDTO fromEntity(Category category);
+public interface CategoryMapper {
+    Category toEntity(CategoryDTO categoryDTO);
+    CategoryDTO fromEntity(Category category);
 }

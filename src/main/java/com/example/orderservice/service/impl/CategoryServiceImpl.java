@@ -1,7 +1,6 @@
 package com.example.orderservice.service.impl;
 
 import com.example.orderservice.dto.CategoryDTO;
-import com.example.orderservice.entity.Category;
 import com.example.orderservice.mapper.CategoryMapper;
 import com.example.orderservice.repository.CategoryRepository;
 import com.example.orderservice.service.CategoryService;

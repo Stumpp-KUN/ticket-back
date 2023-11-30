@@ -2,7 +2,6 @@ package com.example.orderservice.service;
 
 import com.example.orderservice.dto.TicketCreateDTO;
 import com.example.orderservice.dto.TicketReadDTO;
-import com.example.orderservice.entity.Ticket;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.exception.KafkaException;
 import org.springframework.security.oauth2.jwt.Jwt;

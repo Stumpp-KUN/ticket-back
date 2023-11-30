@@ -20,5 +20,5 @@ public class TicketCreateDTO {
 
     private String urgencyId;
 
-    private String category_id;
+    private String categoryId;
 }

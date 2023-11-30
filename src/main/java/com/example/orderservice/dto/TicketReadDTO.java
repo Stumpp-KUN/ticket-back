@@ -34,7 +34,7 @@ public class TicketReadDTO {
 
     private String urgencyId;
 
-    private String category_id;
+    private String categoryId;
 
     private User approver;
 }

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 @Component
-public abstract class UserMapper {
+public interface UserMapper {
 
-    public abstract User toEntity(UserDTO userDTO);
+    User toEntity(UserDTO userDTO);
 
-    public abstract UserDTO fromEntity(User user);
+    UserDTO fromEntity(User user);
 }
