@@ -33,23 +33,27 @@ public class TicketController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TicketReadDTO> createTicket(@RequestBody TicketCreateDTO ticketCreateDTO, @RequestParam String userEmail) throws EntityNotFoundException {
-        return ResponseEntity.ok(ticketService.createTicket(ticketCreateDTO, userEmail));
+    public ResponseEntity<Void> createTicket(@RequestBody TicketCreateDTO ticketCreateDTO, @RequestParam String userEmail) throws EntityNotFoundException {
+        ticketService.createTicket(ticketCreateDTO, userEmail);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TicketReadDTO> updateTicket(@RequestBody @Valid TicketReadDTO ticketReadDTO, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        return ResponseEntity.ok(ticketService.updateTicket(ticketReadDTO,userEmail));
+    public ResponseEntity<Void> updateTicket(@RequestBody @Valid TicketReadDTO ticketReadDTO, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+        ticketService.updateTicket(ticketReadDTO,userEmail);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/state")
-    public ResponseEntity<TicketReadDTO> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        return ResponseEntity.ok(ticketService.updateTicketState(ticket,state,userEmail));
+    public ResponseEntity<Void> updateTicketState(@RequestBody Ticket ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+        ticketService.updateTicketState(ticket,state,userEmail);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/assign")
-    public ResponseEntity<TicketReadDTO> updateTicketAssigner(@RequestBody Ticket ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        return ResponseEntity.ok(ticketService.updateAssigner(ticket,userEmail));
+    public ResponseEntity<Void> updateTicketAssigner(@RequestBody Ticket ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
+        ticketService.updateAssigner(ticket,userEmail);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/review/manager")

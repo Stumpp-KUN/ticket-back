@@ -97,7 +97,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public TicketReadDTO updateAssigner(Ticket ticket, String userEmail) throws EntityNotFoundException, KafkaException {
+    public void updateAssigner(Ticket ticket, String userEmail) throws EntityNotFoundException, KafkaException {
         log.info("Updating assigner, to ticket {}", ticket);
 
         User user = parseUserDtoToUser(userService.getByUserEmail(userEmail));
@@ -125,8 +125,7 @@ public class TicketServiceImpl implements TicketService {
         } catch (Exception e) {
             throw new KafkaException("Error kafka mail sending");
         }
-
-        return ticketMapper.fromEntity(ticketsRepository.save(ticket));
+        ticketsRepository.save(ticket);
     }
 
     @Override
@@ -152,7 +151,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public TicketReadDTO createTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException {
+    public void createTicket(TicketCreateDTO ticketCreateDTO, String userEmail) throws EntityNotFoundException {
         log.info("Creating ticket {}", ticketCreateDTO);
 
         Ticket ticket = ticketUtil.createTicket(ticketCreateDTO, userEmail);
@@ -172,12 +171,11 @@ public class TicketServiceImpl implements TicketService {
             throw new RuntimeException("Error creating ticket", e);
         }
 
-        return ticketMapper.fromEntity(ticket);
     }
 
     @Transactional
     @Override
-    public TicketReadDTO updateTicket(TicketReadDTO ticketReadDTO, String userEmail) throws EntityNotFoundException, KafkaException {
+    public void updateTicket(TicketReadDTO ticketReadDTO, String userEmail) throws EntityNotFoundException, KafkaException {
         log.info("Updating ticket {}", ticketReadDTO);
 
         User user = parseUserDtoToUser(userService.getByUserEmail(userEmail));
@@ -204,12 +202,11 @@ public class TicketServiceImpl implements TicketService {
             throw new KafkaException("Error kafka mail sending");
         }
 
-        return null;
     }
 
     @Transactional
     @Override
-    public TicketReadDTO updateTicketState(Ticket ticket, String state, String userEmail) throws EntityNotFoundException, KafkaException {
+    public void updateTicketState(Ticket ticket, String state, String userEmail) throws EntityNotFoundException, KafkaException {
         log.info("Changing state ticket {}, to state {}", ticket, state);
 
         State state1 = State.valueOf(state);
@@ -250,7 +247,6 @@ public class TicketServiceImpl implements TicketService {
 
         log.info("Added new history log");
 
-        return ticketMapper.fromEntity(ticket);
     }
 
     private List<TicketReadDTO> parseFromEntityList(List<Ticket> tickets) {
