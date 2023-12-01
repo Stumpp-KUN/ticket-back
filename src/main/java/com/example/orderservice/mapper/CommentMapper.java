@@ -4,7 +4,6 @@ import com.example.orderservice.dto.CommentDTO;
 import com.example.orderservice.entity.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, TicketMapper.class})

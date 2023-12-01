@@ -1,10 +1,6 @@
 package com.example.orderservice.dto;
 
-import com.example.orderservice.entity.Category;
 import com.example.orderservice.entity.User;
-import com.example.orderservice.enums.State;
-import com.example.orderservice.enums.Urgency;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

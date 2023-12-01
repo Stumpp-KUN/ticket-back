@@ -2,7 +2,6 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.TicketCreateDTO;
 import com.example.orderservice.dto.TicketReadDTO;
-import com.example.orderservice.entity.Ticket;
 import com.example.orderservice.exception.EntityNotFoundException;
 import com.example.orderservice.exception.KafkaException;
 import com.example.orderservice.service.TicketService;
@@ -40,19 +39,19 @@ public class TicketController {
 
     @PutMapping("/update")
     public ResponseEntity<Void> updateTicket(@RequestBody @Valid TicketReadDTO ticketReadDTO, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        ticketService.updateTicket(ticketReadDTO,userEmail);
+        ticketService.updateTicket(ticketReadDTO, userEmail);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/state")
     public ResponseEntity<Void> updateTicketState(@RequestBody TicketReadDTO ticket, @RequestParam String state, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        ticketService.updateTicketState(ticket,state,userEmail);
+        ticketService.updateTicketState(ticket, state, userEmail);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/assign")
     public ResponseEntity<Void> updateTicketAssigner(@RequestBody TicketReadDTO ticket, @RequestParam String userEmail) throws EntityNotFoundException, KafkaException {
-        ticketService.updateAssigner(ticket,userEmail);
+        ticketService.updateAssigner(ticket, userEmail);
         return ResponseEntity.ok().build();
     }
 
